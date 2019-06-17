@@ -1,0 +1,40 @@
+---
+execution:
+- concurrency: 1
+  hold-for: 60s
+  iterations: 1
+  ramp-up: 60s
+  scenario: Thread Group - addInventory
+scenarios:
+  Thread Group - addInventory:
+    data-sources:
+    - delimiter: ','
+      loop: true
+      path: ${testData.addInventoryFile}
+      quoted: true
+    default-address: http://${host}:${port}/
+    requests:
+    - assert:
+      - assume-success: false
+        contains:
+        - ^\$\{httpStatusCode\}$
+        not: false
+        regexp: true
+        subject: http-code
+      body: "{\r\n\t\"id\": \"d290f1ee-6c54-4b01-90e6-d701748f0851\",\r\n\t\"name\": \"La Mosca\",\r\n\t\"releaseDate\": \"01-01-2001\",\r\n\t\"manufacturer\": {\r\n\t\t\"name\": \"ACME Corporation\",\r\n\t\t\"homePage\": \"https://www.acme-corp.com\",\r\n\t\t\"phone\": \"408-867-5309\"\r\n\t}\r\n}"
+      follow-redirects: true
+      label: addInventory - ${testCase}
+      method: POST
+      url: /MrsDaehin/PruebaJMeter/1.0.0/inventory
+    store-cache: false
+    store-cookie: false
+    use-dns-cache-mgr: false
+    variables:
+      duration: ${__P(duration,1)}
+      host: ${__P(host,localhost)}
+      port: ${__P(port,8080)}
+      rampup: ${__P(rampup,1)}
+      testCases: ${__P(testCases,10)}
+      testData.addInventoryFile: ${__P(testData.addInventoryFile,AdminsApi.csv)}
+      threads: ${__P(threads,1)}
+
